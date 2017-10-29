@@ -265,6 +265,11 @@ Puppet::Type.newtype(:vcsrepo) do
     desc 'The value to be used to do a shallow clone.'
   end
 
+  newparam :svn_path do
+    desc 'The path to the svn command.'
+    defaultto 'svn'
+  end
+
   newparam :branch, required_features: [:branch] do
     desc 'The name of the branch to clone.'
   end

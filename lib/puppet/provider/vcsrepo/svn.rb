@@ -10,6 +10,11 @@ Puppet::Type.type(:vcsrepo).provide(:svn, parent: Puppet::Provider::Vcsrepo) do
   has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration, :conflict, :depth,
                :include_paths
 
+  def initialize(value={})
+    super(value)
+    self.class.has_command(:svn, @resource.value(:svn_path))
+  end
+
   def create
     check_force
     if !@resource.value(:source)
