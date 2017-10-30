@@ -3,17 +3,11 @@ require File.join(File.dirname(__FILE__), '..', 'vcsrepo')
 Puppet::Type.type(:vcsrepo).provide(:svn, parent: Puppet::Provider::Vcsrepo) do
   desc 'Supports Subversion repositories'
 
-  commands svn: 'svn',
-           svnadmin: 'svnadmin',
-           svnlook: 'svnlook'
+  commands :svnadmin => 'svnadmin',
+           :svnlook  => 'svnlook'
 
   has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration, :conflict, :depth,
-               :include_paths
-
-  def initialize(value={})
-    super(value)
-    self.class.has_command(:svn, @resource.value(:svn_path))
-  end
+      :include_paths
 
   def create
     check_force
@@ -36,6 +30,10 @@ Puppet::Type.type(:vcsrepo).provide(:svn, parent: Puppet::Provider::Vcsrepo) do
   end
 
   def working_copy_exists?
+    if @resource.value(:svn_path)
+      self.class.has_command(:svn, @resource.value(:svn_path))
+    end
+
     return false unless File.directory?(@resource.value(:path))
     if @resource.value(:source)
       begin
