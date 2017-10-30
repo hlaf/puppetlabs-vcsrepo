@@ -10,11 +10,6 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
   has_features :filesystem_types, :reference_tracking, :basic_auth, :configuration, :conflict, :depth,
       :include_paths
 
-  def initialize(value={})
-    super(value)
-    self.class.has_command(:svn, @resource.value(:svn_path))
-  end
-
   def create
     check_force
     if !@resource.value(:source)
@@ -36,6 +31,10 @@ Puppet::Type.type(:vcsrepo).provide(:svn, :parent => Puppet::Provider::Vcsrepo) 
   end
 
   def working_copy_exists?
+    if @resource.value(:svn_path)
+      self.class.has_command(:svn, @resource.value(:svn_path))
+    end
+
     return false if not File.directory?(@resource.value(:path))
     if @resource.value(:source)
       begin
